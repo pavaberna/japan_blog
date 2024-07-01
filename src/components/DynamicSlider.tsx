@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import tokyo from "../assets/tokyo.jpg"
 import hakone from "../assets/hakone.jpg"
@@ -21,53 +21,58 @@ function DynamicSlider() {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            if (currentIndex === images.length - 3) {
+            if (currentIndex === images.length - 4) {
                 setCurrentIndex(0);
+            } else {
+                setCurrentIndex(prevIndex => prevIndex + 1);
             }
-            setCurrentIndex(currentIndex => (currentIndex + 1) % (images.length - 3));
         }, 5000);
 
         return () => clearInterval(interval);
-    }, []);
+    }, [currentIndex]);
 
     useEffect(() => {
         if (sliderRef.current) {
             sliderRef.current.style.transition = 'transform 0.5s ease-in-out';
-            sliderRef.current.style.transform = `translateX(-${currentIndex * 225}px)`;
+            sliderRef.current.style.transform = `translateX(-${currentIndex * 14.5}rem)`;
         }
     }, [currentIndex]);
 
     const nextSlide = () => {
-        const isLastSlide = currentIndex === images.length - 1;
-        const newIndex = isLastSlide ? 0 : currentIndex + 1;
-        setCurrentIndex(newIndex);
+        if (currentIndex < images.length - 4) {
+            setCurrentIndex(prevIndex => prevIndex + 1);
+        } else {
+            setCurrentIndex(0);
+        }
     };
 
     const prevSlide = () => {
-        const isFirstSlide = currentIndex === 0;
-        const newIndex = isFirstSlide ? images.length - 1 : currentIndex - 1;
-        setCurrentIndex(newIndex);
+        if (currentIndex > 0) {
+            setCurrentIndex(prevIndex => prevIndex - 1);
+        } else {
+            setCurrentIndex(images.length - 4);
+        }
     };
 
     return (
-        <div className='flex justify-center items-center'>
+        <div className='flex justify-center items-center z-20'>
             <button
                 onClick={prevSlide}
                 className={`left-0 z-10 p-2 bg-gray-200 hover:bg-gray-400 h-12 rounded-full ${currentIndex === 0 ? 'opacity-0 pointer-events-none' : ''}`}
                 aria-label="Previous slide">
                 &#8592;
             </button>
-            <div className="flex justify-center items-center w-[700px] pl-[230px] overflow-hidden">
+            <div className="flex justify-center items-center w-[70%] md:w-[700px] pl-[5%] md:pl-[230px] overflow-hidden">
                 <a href={`#${images[currentIndex].src}`}>
-                    <div ref={sliderRef} className="flex justify-center items-center gap-8">
+                    <div ref={sliderRef} className="relative flex justify-center items-center gap-8 md:w-[87rem]">
                         {images.map((image, index) => (
-                            <div key={index}>
+                            <div key={index} className='relative flex-[0 0 33.33%]'>
                                 <img
                                     src={image.src}
                                     alt={image.text}
-                                    className="h-[300px] w-[200px] object-cover rounded-xl"
+                                    className="w-full md:h-[20rem] object-cover rounded-xl"
                                 />
-                                <div className="w-[200px] bg-black bg-opacity-50 text-white p-2 text-center">
+                                <div className="absolute bottom-0 w-full bg-black bg-opacity-50 text-white p-2 text-xl text-center">
                                     {image.text}
                                 </div>
                             </div>
