@@ -1,4 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
+
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import { Autoplay } from 'swiper/modules';
 
 import tokyo from "../assets/tokyo.jpg"
 import hakone from "../assets/hakone.jpg"
@@ -8,7 +12,6 @@ import osaka from "../assets/osaka.jpg"
 
 const images = [
     { src: tokyo, text: "TOKYO" },
-    { src: tokyo, text: "TOKYO" },
     { src: hakone, text: "HAKONE" },
     { src: kyoto, text: "KYOTO" },
     { src: nara, text: "NARA" },
@@ -16,77 +19,73 @@ const images = [
 ];
 
 function DynamicSlider() {
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const sliderRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            if (currentIndex === images.length - 4) {
-                setCurrentIndex(0);
-            } else {
-                setCurrentIndex(prevIndex => prevIndex + 1);
-            }
-        }, 5000);
-
-        return () => clearInterval(interval);
-    }, [currentIndex]);
-
-    useEffect(() => {
-        if (sliderRef.current) {
-            sliderRef.current.style.transition = 'transform 0.5s ease-in-out';
-            sliderRef.current.style.transform = `translateX(-${currentIndex * 14.5}rem)`;
-        }
-    }, [currentIndex]);
-
-    const nextSlide = () => {
-        if (currentIndex < images.length - 4) {
-            setCurrentIndex(prevIndex => prevIndex + 1);
-        } else {
-            setCurrentIndex(0);
-        }
-    };
-
-    const prevSlide = () => {
-        if (currentIndex > 0) {
-            setCurrentIndex(prevIndex => prevIndex - 1);
-        } else {
-            setCurrentIndex(images.length - 4);
-        }
-    };
+    const [active, setActive] = useState<null | number>(null)
 
     return (
-        <div className='flex justify-center items-center z-20'>
-            <button
-                onClick={prevSlide}
-                className={`left-0 z-10 p-2 bg-gray-200 hover:bg-gray-400 h-12 rounded-full ${currentIndex === 0 ? 'opacity-0 pointer-events-none' : ''}`}
-                aria-label="Previous slide">
-                &#8592;
-            </button>
-            <div className="flex justify-center items-center w-[70%] md:w-[700px] pl-[5%] md:pl-[230px] overflow-hidden">
-                <a href={`#${images[currentIndex].src}`}>
-                    <div ref={sliderRef} className="relative flex justify-center items-center gap-8 md:w-[87rem]">
-                        {images.map((image, index) => (
-                            <div key={index} className='relative flex-[0 0 33.33%]'>
-                                <img
-                                    src={image.src}
-                                    alt={image.text}
-                                    className="w-full md:h-[20rem] object-cover rounded-xl"
-                                />
-                                <div className="absolute bottom-0 w-full bg-black bg-opacity-50 text-white p-2 text-xl text-center">
-                                    {image.text}
+        <div className="text-white flex items-center justify-center z-20">
+            <div className="max-w-4xl max-w-xs md:block hidden">
+                <Swiper
+                    spaceBetween={30}
+                    slidesPerView={3}
+                    onSlideChange={(cur) => setActive(cur.realIndex)}
+                    loop={true}
+                    centeredSlides={true}
+                    speed={800}
+                    autoplay={{
+                        delay: 3000
+                    }}
+                    modules={[Autoplay]}
+                >
+
+                    <div className="flex justify-center items-center overflow-hidden">
+                        {images.map((city, index) => (
+                            <SwiperSlide key={index}>
+                                <div className='h-96 flex'>
+                                    <div className={`card dynamic-bg bg-[url("${city.src}")] ${active === index && "card-active"}`}
+                                        style={{ backgroundImage: `url(${city.src})` }}
+                                    >
+                                        <h2 className='text-3xl pt-8 font-semibold'>{city.text}</h2>
+
+                                    </div>
                                 </div>
-                            </div>
+                            </SwiperSlide>
+
                         ))}
                     </div>
-                </a>
+                </Swiper>
             </div>
-            <button
-                onClick={nextSlide}
-                className={`right-0 z-10 p-2 bg-gray-200 hover:bg-gray-400 h-12 rounded-full ${currentIndex === images.length - 4 ? 'opacity-0 pointer-events-none' : ''}`}
-                aria-label="Next slide">
-                &#8594;
-            </button>
-        </div >
+            <div className="max-w-sm block md:hidden">
+                <Swiper
+                    spaceBetween={10}
+                    slidesPerView={2}
+                    onSlideChange={(cur) => setActive(cur.realIndex)}
+                    loop={true}
+                    centeredSlides={true}
+                    speed={800}
+                    autoplay={{
+                        delay: 3000
+                    }}
+                    modules={[Autoplay]}
+                >
+
+                    <div className="flex justify-center items-center overflow-hidden">
+                        {images.map((city, index) => (
+                            <SwiperSlide key={index}>
+                                <div className='h-96 flex'>
+                                    <div className={`card dynamic-bg bg-[url("${city.src}")] ${active === index && "card-active"}`}
+                                        style={{ backgroundImage: `url(${city.src})` }}
+                                    >
+                                        <h2 className='text-xl font-semibold'>{city.text}</h2>
+
+                                    </div>
+                                </div>
+                            </SwiperSlide>
+
+                        ))}
+                    </div>
+                </Swiper>
+            </div>
+        </div>
     );
 }
 

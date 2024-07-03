@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.card{
+    @apply relative w-64 rounded-md h-44 text-center self-end duration-500 delay-100 shadow-black shadow-2xl cursor-grab z-10 text-szoveg py-7;
+}
+
+.card-active{
+    @apply md:h-96 h-60 text-szoveg py-7 shadow-black shadow-2xl ;
+}
+
+.card .skill-level{
+    @apply  text-white min-w-[3rem] min-h-[3rem] grid place-items-center rounded-full max-w-[3rem] absolute -right-2.5 scale-x-50;
+}
+
+.card-active .skill-level{
+   @apply scale-[1.3] delay-700 duration-300 
+}
+ 
+
+.dynamic-bg {
+    @apply bg-cover bg-center bg-no-repeat;
+}
